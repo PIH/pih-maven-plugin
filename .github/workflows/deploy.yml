@@ -20,7 +20,7 @@ jobs:
         server-username: SONATYPE_USERNAME
         server-password: SONATYPE_PASSWORD
         gpg-private-key: ${{ secrets.SONATYPE_GPG_PRIVATE_KEY }}
-        gpg-passphrase: SONTATYPE_GPG_PASSPHRASE
+        gpg-passphrase: SONATYPE_GPG_PASSPHRASE
 
     - name: Maven Deploy
       run: mvn -B deploy --file pom.xml
