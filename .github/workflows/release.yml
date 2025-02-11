@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,16 +27,9 @@ jobs:
           git config user.email "github-action@users.noreply.github.com"
 
       - name: Deploy release
-        run: mvn -B release:prepare release:perform --file pom.xml
+        run: mvn -B release:prepare release:perform -Prelease --file pom.xml
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        # Now run a final deploy to ensure the next SNAPSHOT is also built and deployed to Maven
-      - name: Deploy next snapshot
-        run: mvn -B -e clean deploy --file pom.xml
-        env:
-          BINTRAY_USERNAME: ${{ secrets.MAVEN_REPOSITORY_USERNAME }}
-          BINTRAY_PASSWORD: ${{ secrets.MAVEN_REPOSITORY_PASSWORD }}
