@@ -8,6 +8,26 @@
     <packaging>maven-plugin</packaging>
 
     <name>PIH Maven Plugin</name>
+    <description>Collection of Maven Plugins for PIH</description>
+    <url>https://github.com/PIH/pih-maven-plugin</url>
+
+    <organization>
+        <name>Partners In Health</name>
+        <url>http://pih.org</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Partners In Health</name>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Mozilla Public License 2.0 with Healthcare Disclaimer</name>
+            <url>http://openmrs.org/license</url>
+        </license>
+    </licenses>
 
     <properties>
         <mavenVersion>3.9.9</mavenVersion>
