@@ -1,0 +1,40 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 8
+          cache: 'maven'
+          server-id: sonatype
+          server-username: SONATYPE_USERNAME
+          server-password: SONATYPE_PASSWORD
+          gpg-private-key: ${{ secrets.SONATYPE_GPG_PRIVATE_KEY }}
+          gpg-passphrase: SONTATYPE_GPG_PASSPHRASE
+
+      # Set up git config
+      - name: Setup Git Config
+        run: |
+          git config user.email "github-action@users.noreply.github.com"
+          git config user.name "Github Action"
+          git config user.password "$GITHUB_TOKEN"
+
+      - name: Deploy release
+        run: mvn -B release:prepare release:perform --file pom.xml
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
+
+        # Now run a final deploy to ensure the next SNAPSHOT is also built and deployed to Maven
+      - name: Deploy next snapshot
+        run: mvn -B -e clean deploy --file pom.xml
+        env:
+          BINTRAY_USERNAME: ${{ secrets.MAVEN_REPOSITORY_USERNAME }}
+          BINTRAY_PASSWORD: ${{ secrets.MAVEN_REPOSITORY_PASSWORD }}
