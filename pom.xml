@@ -20,9 +20,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:PIH/pih-maven-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:PIH/pih-maven-plugin.git</developerConnection>
-        <url>scm:git:git@github.com:PIH/pih-maven-plugin.git</url>
+        <connection>scm:git:https://github.com/PIH/pih-maven-plugin.git</connection>
+        <developerConnection>scm:git:https://github.com/PIH/pih-maven-plugin.git</developerConnection>
+        <url>https://github.com/PIH/pih-maven-plugin.git</url>
         <tag>HEAD</tag>
     </scm>
 
