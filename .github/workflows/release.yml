@@ -1,3 +1,5 @@
+name: Release
+
 on:
   workflow_dispatch:
 
@@ -12,7 +14,7 @@ jobs:
           distribution: 'temurin'
           java-version: 8
           cache: 'maven'
-          server-id: sonatype
+          server-id: ossrh
           server-username: SONATYPE_USERNAME
           server-password: SONATYPE_PASSWORD
           gpg-private-key: ${{ secrets.SONATYPE_GPG_PRIVATE_KEY }}
@@ -21,9 +23,8 @@ jobs:
       # Set up git config
       - name: Setup Git Config
         run: |
-          git config user.email "github-action@users.noreply.github.com"
           git config user.name "Github Action"
-          git config user.password "$GITHUB_TOKEN"
+          git config user.email "github-action@users.noreply.github.com"
 
       - name: Deploy release
         run: mvn -B release:prepare release:perform --file pom.xml
@@ -31,6 +32,7 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_GPG_PASSPHRASE: ${{ secrets.SONATYPE_GPG_PASSPHRASE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         # Now run a final deploy to ensure the next SNAPSHOT is also built and deployed to Maven
       - name: Deploy next snapshot
