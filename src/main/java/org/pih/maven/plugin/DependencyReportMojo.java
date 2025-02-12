@@ -35,6 +35,9 @@ public class DependencyReportMojo extends AbstractMojo {
 	@Parameter(property = "outputFile", defaultValue = "dependencies.txt")
 	private File outputFile;
 
+	@Parameter(property = "excludes")
+	private List<String> excludes;
+
 	@Override
 	public void execute() throws MojoFailureException {
 		try {
@@ -44,10 +47,16 @@ public class DependencyReportMojo extends AbstractMojo {
 			getLog().debug("---------------------- Tracked Dependencies ----------------------");
 			Map<String, Artifact> dependencyArtifacts = new TreeMap<>();
 			for (Dependency d : dependencies) {
-				getLog().debug("Dependency: " + d);
-				Artifact artifact = getArtifact(d);
-				getLog().debug("Resolved dependency to artifact: " + artifact);
-				dependencyArtifacts.put(artifact.getId(), artifact);
+				String exclusionIdentifier = getExclusionIdentifier(d);
+				if (excludes != null && excludes.contains(exclusionIdentifier)) {
+					getLog().info("Excluding Dependency: " + d);
+				}
+				else {
+					getLog().debug("Dependency: " + d);
+					Artifact artifact = getArtifact(d);
+					getLog().debug("Resolved dependency to artifact: " + artifact);
+					dependencyArtifacts.put(artifact.getId(), artifact);
+				}
 			}
 			List<String> lines = new ArrayList<>();
 			for (String key : dependencyArtifacts.keySet()) {
@@ -55,7 +64,7 @@ public class DependencyReportMojo extends AbstractMojo {
 				getLog().debug("Generating sha1 hash for artifact file: " + artifact.getFile());
 				byte[] fileBytes = Files.readAllBytes(artifact.getFile().toPath());
 				String sha1Hex = DigestUtils.sha1Hex(fileBytes);
-				String line = artifact.getId() + ":" + sha1Hex;
+				String line = artifact.getId() + "=" + sha1Hex;
 				getLog().info(line);
 				lines.add(line);
 			}
@@ -66,6 +75,13 @@ public class DependencyReportMojo extends AbstractMojo {
 		catch (IOException e) {
 			throw new MojoFailureException("An error occurred while tracking dependencies", e);
 		}
+	}
+
+	/**
+	 * @return an identifier for a given identifier, for use in identifying excludsions
+	 */
+	protected String getExclusionIdentifier(Dependency d) {
+		return d.getGroupId() + ":" + d.getArtifactId();
 	}
 
 	/**
