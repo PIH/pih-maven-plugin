@@ -70,6 +70,9 @@ public class DependencyReportMojo extends AbstractMojo {
 			}
 			getLog().debug("------------------------------------------------------------------");
 			getLog().info("Saving dependency tracker artifact to " + outputFile);
+			if (outputFile.getParentFile().mkdirs()) {
+				getLog().debug("Creating output directory: " + outputFile.getParentFile());
+			}
 			Files.write(outputFile.toPath(), lines);
 		}
 		catch (IOException e) {
