@@ -2,6 +2,11 @@ name: Release new version
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_existing_tag:
+        description: Leave empty for a normal release. Only to publish a tag that a failed release already pushed but never published (release:prepare pushed the tag, release:perform failed) - runs release:perform alone, from that tag.
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -9,4 +14,6 @@ permissions:
 jobs:
   release:
     uses: PIH/openmrs-contrib-distro-tools/.github/workflows/release-to-sonatype.yml@main
+    with:
+      publish_existing_tag: ${{ inputs.publish_existing_tag }}
     secrets: inherit
