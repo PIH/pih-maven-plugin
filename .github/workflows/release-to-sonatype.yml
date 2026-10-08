@@ -2,6 +2,11 @@ name: Release new version
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing tag to publish (only to recover a release whose release:perform failed after its tag was pushed)
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -9,4 +14,6 @@ permissions:
 jobs:
   release:
     uses: PIH/openmrs-contrib-distro-tools/.github/workflows/release-to-sonatype.yml@main
+    with:
+      release_tag: ${{ inputs.release_tag }}
     secrets: inherit
